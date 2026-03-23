@@ -20,7 +20,7 @@ if not api_key:
 
 client = OpenAI(api_key=api_key)
 
-PROMPT = """
+PROMPT = '''
 너는 4050 여성 패션 전문 온라인몰 미샵(MISHARP)의 시니어 에디터다.
 
 목표:
@@ -59,7 +59,7 @@ H2. 이렇게 코디해보세요
 이미지 ALT 텍스트
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 - 6개 생성
-"""
+'''
 
 def build_prompt(data: Dict[str, str]) -> str:
     return PROMPT + "\n\n입력 정보:\n" + str(data)
@@ -123,22 +123,33 @@ if st.button("생성하기"):
 
     prompt = build_prompt(data)
 
-    response = client.chat.completions.create(
-        model="gpt-4.1",
-        messages=[
-            {"role": "system", "content": "구조 유지"},
-            {"role": "user", "content": prompt}
-        ]
-    )
+    with st.spinner("생성중입니다..."):
+        response = client.chat.completions.create(
+            model="gpt-4.1",
+            messages=[
+                {"role": "system", "content": "구조 유지"},
+                {"role": "user", "content": prompt}
+            ]
+        )
 
-    result = response.choices[0].message.content
+        result = response.choices[0].message.content
 
     st.text_area("결과", result, height=900)
 
     docx = result_to_docx_bytes(result)
 
-    st.download_button("TXT", result)
-    st.download_button("DOCX", docx)
+    st.download_button(
+        "TXT 다운로드",
+        data=result,
+        file_name=f"{product_name or 'page-builder-v2.3'}_output.txt",
+        mime="text/plain"
+    )
+    st.download_button(
+        "DOCX 다운로드",
+        data=docx,
+        file_name=f"{product_name or 'page-builder-v2.3'}_output.docx",
+        mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    )
 
 st.markdown("---")
 st.markdown("© MISHARP")
