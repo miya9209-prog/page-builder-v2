@@ -164,7 +164,7 @@ def result_to_docx_bytes(result_text: str) -> bytes:
 
 h1, h2, h3 = st.columns([2.4, 1.0, 8.6])
 with h1:
-    st.subheader("V2 입력")
+    st.subheader("정보 입력")
 with h2:
     st.write("")
     if st.button("초기화", use_container_width=True):
